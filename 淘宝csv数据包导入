@@ -40,11 +40,20 @@ class phpExcelIO{
 		}
 		return $destination;
 	}
+	/**
+	 * 数据库连接
+	 * Enter description here ...
+	 */
 	static function conn(){
 		$conn = mysql_connect('127.0.0.1','root','root');
 		mysql_query("set names utf8");
 		mysql_select_db('b2b2c',$conn) or die("error".mysql_error());
 	}
+	/**
+	 * csv数据包转化xls， 把数据拼装成二维数组
+	 * Enter description here ...
+	 * @param unknown_type $path
+	 */
 	function excelIOManage($path){
 		require_once 'excel_reader2.php';
 		$data = new Spreadsheet_Excel_Reader();
@@ -68,6 +77,11 @@ class phpExcelIO{
 		}
 		return $result;
 	}
+	/**
+	 * 根据商品描述，获取颜色信息
+	 * Enter description here ...
+	 * @param unknown_type $str
+	 */
     public function get_color($str){
 		preg_match_all("/颜&nbsp;&nbsp;&nbsp;&nbsp;色(.*)&nbsp;&nbsp;&nbsp;&nbsp;/", $str, $arr);
 	
@@ -78,6 +92,11 @@ class phpExcelIO{
 		$str_color = explode("|",$str[0]);
 		return $str_color;
     }
+    /**
+     * 根据已存在的颜色信息，获取颜色对应spec_value_id，spec_image 拼装成数组(颜色和尺码组合
+     * Enter description here ...
+     * @param unknown_type $imgarr
+     */
     public function get_imgarr($imgarr){
     	$result=array();
     	$color_arr = array();
@@ -90,6 +109,12 @@ class phpExcelIO{
     	}
     	return $result;
     }
+    /**
+     * 拼接goods数据表属性信息
+     * Enter description here ...
+     * @param unknown_type $imgarray
+     * @param unknown_type $createtime
+     */
     public function get_goodsdesc($imgarray,$createtime){
     	$result=array();
     	$goodsimgid=$createtime.'242';
@@ -118,6 +143,13 @@ class phpExcelIO{
     	//var_dump($result);
     	return $result;
     }
+    /**
+     * 拼接products 描述信息
+     * Enter description here ...
+     * @param unknown_type $imgarray
+     * @param unknown_type $createtime
+     * @param unknown_type $i
+     */
     public function get_prodesc($imgarray,$createtime,$i){
     	$goodsimgid=$createtime.'242';
 	    $result=array(
@@ -138,6 +170,11 @@ class phpExcelIO{
     	//var_dump($result);
     	return $result;
     }
+    /**
+     * 根据颜色名称，获取spec_value_id，spec_value_id
+     * Enter description here ...
+     * @param unknown_type $value
+     */
     private function get_SpecValues($value){
     	self::conn();
     	$spec_values = array();
