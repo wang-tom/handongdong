@@ -1,0 +1,42 @@
+1.下载安装coreseek
+wget http://www.coreseek.cn/uploads/csft/4.0/coreseek-4.1-beta.tar.gz
+tar xzvf coreseek-4.1-beta.tar.gz
+cd coreseek-4.1-beta
+
+2.安装mmseg
+cd mmseg-3.2.14
+./bootstrap #输出的warning信息可以忽略，如果出现error则需要解决
+./configure --prefix=/usr/local/mmseg3
+make && make install
+cd ..
+
+3.安装coreseek
+cd csft-4.1
+sh buildconf.sh #输出的warning信息可以忽略，如果出现error则需要解决
+./configure --prefix=/usr/local/coreseek --without-unixodbc --with-mmseg --with-mmseg-includes=/usr/local/mmseg3/include/mmseg/ --with-mmseg-libs=/usr/local/mmseg3/lib/ --with-mysql
+make && make install
+cd ..
+
+4.测试mmseg分词，coreseek搜索
+cd testpack
+cat var/test/test.xml #此时应该正确显示中文 
+
+5.使用示例
+  5.1 创建配置文件
+  $ cd /usr/local/sphinx/etc
+  $ cp sphinx.conf.dist sphinx.conf
+  $ vi sphinx.conf
+  
+  5.2 MySQL数据库test中的 documents 表建立索引
+  $ mysql -u test < /usr/local/sphinx/etc/example.sql
+  
+  运行indexer 为你的数据创建全文索引:
+  $ cd /usr/local/sphinx/etc
+  $ /usr/local/sphinx/bin/indexer --all
+  
+  5.3 检索你新创建的索引!
+  你可以使用search（注意，是search而不是searchd）实用程序从命令行对索引进行检索:
+  $ cd /usr/local/sphinx/etc
+  $ /usr/local/sphinx/bin/search one
+
+
