@@ -1,0 +1,34 @@
+HTML:
+<script type="text/javascript" src="http://www.youxiaju.com/js/jquery-1.4.2.min.js"></script>
+<script type="text/javascript">
+$(function(){
+$.ajax(
+    {
+        type:'get',
+        url : 'http://www.youxiaju.com/validate.php?loginuser=lee&loginpass=123456',
+        dataType : 'jsonp',
+        jsonp:"jsoncallback",
+        success  : function(data) {
+            alert("用户名："+ data.user +" 密码："+ data.pass);
+        },
+        error : function() {
+            alert('fail');
+        }
+    }
+);
+})
+</script>
+
+PHP:
+<?php
+header('Content-Type:text/html;Charset=utf-8');
+$arr = array(
+	"user" => $_GET['loginuser'],
+	"pass" => $_GET['loginpass'],
+	"name" => 'response'
+
+);
+echo $_GET['jsoncallback'] . "(".json_encode($arr).")";
+
+
+
