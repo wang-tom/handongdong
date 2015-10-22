@@ -172,7 +172,7 @@ class ImUCTAction extends Action{
 			);
 		}
 		$pro_props = array();
-		$auto = 1;
+
 		foreach ($res as $key=>$value){
 			$color_val = $value['color_format'];
 			$size_val = $value['size_format'];
@@ -181,9 +181,10 @@ class ImUCTAction extends Action{
 			$props_pro = serialize($pro_props['products']);
 			$props_goods = serialize($pro_props['goods']);
 			
+			$auto = rand(00,99);
 			//添加products csv_uct_products
 			$importPro::add_csv_products($value, $props_pro, $props_goods,$auto);
-			$auto++;
+
 			//添加products csv_uct_goods
 			if (!empty($color_val)){
 				//csv_goods 数据表信息 只做 参考 [ecstore sdb_b2c_goods****** 
@@ -192,8 +193,8 @@ class ImUCTAction extends Action{
 				//dump($imageParam);exit;
 				//************导入数据到ecstore sdb_b2c_goods **********
 				//ecstore goods 数据表
-				//$imageParam = $importPro::insertImage($value['bn']);
-				//$importPro::add_ecstore_csv_goods($value,$imageParam);
+				$imageParam = $importPro::insertImage($value['bn']);
+				$importPro::add_ecstore_csv_goods($value,$imageParam);
 			}
 			
 		}
