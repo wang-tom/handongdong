@@ -354,7 +354,7 @@ class importPro{
 	}
 
 	static function get_ECgoodsID_by_bn($bn){
-		$data = M("B2cGoods","sdb_","EC")->field('goods_id')->where("bn=".$bn)->limit(1)->select();
+		$data = M("B2cGoods","sdb_","EC")->field('goods_id')->where("bn='$bn'")->limit(1)->select();
 		return $data['0']['goods_id'];
 	}
 	
@@ -363,6 +363,5 @@ class importPro{
 		$model->where("id=".$pID)->save($data);
 	}
 }
-
 
 
