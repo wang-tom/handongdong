@@ -35,3 +35,10 @@ if(isset($fileInfo)){
 		echo "upload error";
 	}
 }
+
+
+//upload.html************************************************
+<form action="upload_file" enctype="multipart/form-data" method="post">
+	<input type="file" name="myFile"/>
+	<input type="submit" value="upload"/>
+</form>
