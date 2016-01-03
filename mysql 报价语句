@@ -1,0 +1,34 @@
+if (isset($bjprice) && $bjprice != ""){
+			$sql = "UPDATE xundian_baojia 
+						set price = CASE model_id 
+							when 25 then '$a1' 
+							when 26 then '$c85' 
+							when 27 then '$c86' 
+							when 28 then '$mt1'
+							when 29 then '$mt2' 
+							when 30 then '$p6' 
+							when 31 then '$p7' 
+							when 32 then '$mt7' 
+							when 33 then '$ry6' 
+						END 
+					WHERE model_id in (25,26,27,28,29,30,31,32,33) and gztype_id = '$tyid' and brand_id=10 and uid='$uid' and cid='$cid'";
+			$execute = M();
+			if($execute->execute($sql)){
+				$data['status'] = "success";
+			}else $data['status'] = "error";
+		}else{
+			$sql = "insert into xundian_baojia(cid,uid,wxtype_id,brand_id,model_id,gztype_pid,gztype_id,price) values 
+					('$cid','$uid',1,10,25,'$typid','$tyid','$a1'),('$cid','$uid',1,10,26,'$typid','$tyid','$c85'),('$cid','$uid',1,10,27,'$typid','$tyid','$c86'), 
+					('$cid','$uid',1,10,28,'$typid','$tyid','$mt1'),('$cid','$uid',1,10,29,'$typid','$tyid','$mt2'),('$cid','$uid',1,10,30,'$typid','$tyid','$p6'),
+					('$cid','$uid',1,10,31,'$typid','$tyid','$p7'),('$cid','$uid',1,10,32,'$typid','$tyid','$mt7'),('$cid','$uid',1,10,33,'$typid','$tyid','$ry6')";
+
+			$query = M();
+			$res = $query->query($sql);
+			if($res !== false){
+				$data['status'] = "success";
+			}else $data['status'] = "error";
+		}
+		$this->ajaxReturn($data);
+		
+		
+		
