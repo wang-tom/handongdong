@@ -1,1 +1,15 @@
 http://www.xuejiehome.com/blread-1283.html
+
+start.sh
+#!/bin/bash
+/usr/local/sphinx-for-chinese/bin/searchd -c /usr/local/sphinx-for-chinese/etc/sphinx.conf
+
+
+build.sh
+#!/bin/bash
+/usr/local/sphinx-for-chinese/bin/indexer -c /usr/local/sphinx-for-chinese/etc/sphinx.conf --all --rotate
+
+stop.sh
+#!/bin/bash
+/usr/local/sphinx-for-chinese/bin/searchd -c /usr/local/sphinx-for-chinese/etc/sphinx.conf --stop
+
