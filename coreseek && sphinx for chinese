@@ -1,5 +1,17 @@
 http://www.xuejiehome.com/blread-1283.html
 
+start.sh
+#!/bin/bash
+/usr/local/sphinx-for-chinese/bin/searchd -c /usr/local/sphinx-for-chinese/etc/sphinx.conf
+
+build.sh
+#!/bin/bash
+/usr/local/sphinx-for-chinese/bin/indexer -c /usr/local/sphinx-for-chinese/etc/sphinx.conf --all --rotate
+
+stop.sh
+#!/bin/bash
+/usr/local/sphinx-for-chinese/bin/searchd -c /usr/local/sphinx-for-chinese/etc/sphinx.conf --stop
+
 $ cd /usr/local/src
 $ wget -c http://sphinx-for-chinese.googlecode.com/files/sphinx-for-chinese-1.10.1-dev-r2287.tar.gz 
 $ wget -c http://sphinx-for-chinese.googlecode.com/files/xdict_1.1.tar.gz
@@ -206,36 +218,8 @@ if ($_GET) {
         var_dump ( $errors );
         echo '<pre>';
         var_dump ( $orgDatas );
-        /* // 下面是对结果的处理
-        $datas = array('goods'=>array(),'total'=>0);
-        if ($orgDatas['total'] > 0) {
-            $datas['total'] = $orgDatas['total'];
-            foreach ($orgDatas['matches'] AS $val) {
-            $val['attrs']['goods_id'] = $val['attrs']['goods_id_new'];
-            unset($val['attrs']['goods_id_new']);
-            $datas['goods'][] = $val['attrs'];
-        }
-        }
-        var_dump($datas);
-        */
     }
 } else {
     echo '<form method="get"><input type="type" name="keyword"><input type="submit" value="商品搜索"></form>';
 }
-?>
-
-
-
-start.sh
-#!/bin/bash
-/usr/local/sphinx-for-chinese/bin/searchd -c /usr/local/sphinx-for-chinese/etc/sphinx.conf
-
-
-build.sh
-#!/bin/bash
-/usr/local/sphinx-for-chinese/bin/indexer -c /usr/local/sphinx-for-chinese/etc/sphinx.conf --all --rotate
-
-stop.sh
-#!/bin/bash
-/usr/local/sphinx-for-chinese/bin/searchd -c /usr/local/sphinx-for-chinese/etc/sphinx.conf --stop
 
