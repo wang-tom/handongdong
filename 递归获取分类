@@ -7,12 +7,14 @@
 		$model = M("B2cGoodsCat","sdb_","EC");
 		$goods_cat = $model->field(array('cat_id,cat_name'))->where('parent_id='.$pid)->select();
 		global $str;
-		$str .= '<ul>';
-		foreach ($goods_cat as $value) {
-			$str .= '<li pid="'.$value['cat_id'].'">'.$value['cat_name'].'</li>';
-			self::digui_getCatTree($value['cat_id']);
+		if(!empty($goods_cat)){
+			$str .= '<ul>';
+			foreach ($goods_cat as $value) {
+				$str .= '<li pid="'.$value['cat_id'].'">'.$value['cat_name'].'</li>';
+				self::digui_getCatTree($value['cat_id']);
+			}
+			$str .= '</ul>';
 		}
-		$str .= '</ul>';
 		return $str;
 	}	
 	
