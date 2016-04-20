@@ -1,0 +1,20 @@
+
+
+var im = im_price.sort(function(a,b){return a-b});
+var ex = ex_price.sort(function(a,b){return a-b});
+console.log(im);
+console.log(ex);
+			    			
+//冒泡排序算法
+function sort_arr(arr) {
+	for (var i = 0;i<arr.length;i++) {
+		for (var j = 0; j < arr.length-i-1; j++) {
+			if (arr[j]>arr[j+1]) { //从小到大排序sort_arr
+				var temp = arr[j];
+				arr[j] = arr[j+1];
+				arr[j+1] = temp;
+			}
+		}
+	}
+	return arr;
+}
