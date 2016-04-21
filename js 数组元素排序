@@ -4,7 +4,22 @@ var im = im_price.sort(function(a,b){return a-b});
 var ex = ex_price.sort(function(a,b){return a-b});
 console.log(im);
 console.log(ex);
-			    			
+
+var arr1 = ["", "120", "125", "125", "130", "130", "130", "130", "130"];
+var arr2 = ["", "120", "125", "130"];
+for (var i = arr1.length - 1; i >= 0; i--) {
+    a = arr1[i];
+    for (var j = arr2.length - 1; j >= 0; j--) {
+        b = arr2[j];
+        if (a == b) {
+            arr1.splice(i, 1);
+            arr2.splice(j, 1);
+            break;
+        }
+    }
+}
+console.log(arr1);  // ["125","130","130","130","130"]
+
 //冒泡排序算法
 function sort_arr(arr) {
 	for (var i = 0;i<arr.length;i++) {
