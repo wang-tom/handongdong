@@ -1,0 +1,34 @@
+一。数据缓存 【把搜索结果序列化后保存到文件中，之后同样查询结果从缓存文件中获取
+
+二。页面缓存 【缓存页面
+
+三。静态缓存 【页面静态化
+
+四。内存缓存 【Memcache Redis
+
+五。PHP缓存加速器 【xcache  opcode
+
+六。MySQL缓存 【my.ini 
+[client]
+……
+default-character-set=gbk
+default-storage-engine=MYISAM
+max_connections=600
+max_connect_errors=500
+back_log=200
+interactive_timeout=7200
+query_cache_size=64M
+……
+table_cache=512
+……
+myisam_max_sort_file_size=100G
+myisam_max_extra_sort_file_size=100G
+myisam_sort_buffer_size=128M
+key_buffer_size=1024M
+read_buffer_size=512M
+……
+thread_concurrency=8
+
+七。 反向代理 【Nginx
+
+八。 Dns 
