@@ -1,0 +1,225 @@
+http://www.xuejiehome.com/blread-1283.html
+
+start.sh
+#!/bin/bash
+/usr/local/sphinx-for-chinese/bin/searchd -c /usr/local/sphinx-for-chinese/etc/sphinx.conf
+
+build.sh
+#!/bin/bash
+/usr/local/sphinx-for-chinese/bin/indexer -c /usr/local/sphinx-for-chinese/etc/sphinx.conf --all --rotate
+
+stop.sh
+#!/bin/bash
+/usr/local/sphinx-for-chinese/bin/searchd -c /usr/local/sphinx-for-chinese/etc/sphinx.conf --stop
+
+$ cd /usr/local/src
+$ wget -c http://sphinx-for-chinese.googlecode.com/files/sphinx-for-chinese-1.10.1-dev-r2287.tar.gz 
+$ wget -c http://sphinx-for-chinese.googlecode.com/files/xdict_1.1.tar.gz
+
+$ cd /usr/local/src
+$ tar zxvf sphinx-for-chinese-1.10.1-dev-r2287.tar.gz 
+$ cd sphinx-for-chinese-1.10.1-dev-r2287 
+#MySQL安装在默认位置的使用如下命令 
+$ ./configure --prefix=/usr/local/sphinx-for-chinese-1.10.1 --with-mysql
+
+
+./configure --prefix=/usr/local/sphinx-for-chinese-1.10.1 --with-mysql-includes=/usr/local/webserver/mysql/include/mysql --with-mysql-libs=/usr/local/webserver/mysql/lib/mysql
+
+
+$ make
+$ make install
+#最后执行命令 
+$ ls /usr/local/sphinx-for-chinese-1.10.1/
+
+
+$ cd /usr/local/src
+$ tar zxvf xdict_1.1.tar.gz 
+$ /usr/local/sphinx-for-chinese-1.10.1/bin/mkdict xdict_1.1.txt xdict_1.1
+
+ln -s /usr/local/webserver/mysql/lib/mysql/libmysqlclient.so.16.0.0 /usr/lib/libmysqlclient.so.16
+
+$ /usr/local/sphinx-for-chinese-1.10.1/bin/mkdict xdict_1.1.txt xdict_1.1 
+#提示Chinese dictionary was successfully created!表示中文分词词典生成成功 
+$ cp xdict_1.1 /usr/local/sphinx-for-chinese-1.10.1/etc/xdict_1.1
+
+vi /usr/local/sphinx-for-chinese-1.10.1/etc/sphinx.conf
+
+
+# sphinx基本配置 
+# 索引源 
+source goods_src 
+{ 
+    # 数据库类型 
+    type = mysql 
+    # MySQL主机IP 
+    sql_host = localhost 
+    # MySQL用户名 
+    sql_user = sphinxuser 
+    # MySQL密码 
+    sql_pass = sphinxpass 
+    # MySQL数据库 
+    sql_db = sphinx 
+    # MySQL端口(如果防火墙有限制,请开启) 
+    sql_port= 3306 
+    # MySQL sock文件设置(默认为/tmp/mysql.sock,如果不一样,请指定) 
+    sql_sock = /tmp/mysql.sock 
+    # MySQL检索编码(数据库非utf8的很可能检索不到) 
+    sql_query_pre = SET NAMES UTF8 
+    # 获取数据的SQL语句 
+    sql_query = SELECT goods_id,goods_id AS goods_id_new,goods_name,goods_color,goods_name AS goods_name_search,goods_color AS goods_color_search From goods_test 
+    # 以下是用来过滤或条件查询的属性(以下字段显示在查询结果中,不在下面的字段就是搜索时要搜索的字段,如SQL语句中的goods_color_search,goods_name_search) 
+    # 无符号整型 
+    #goods_id为主键,如果加在这里在生成索引的时候会报attribute 'goods_id' not found,这里用goods_id_new来变通 
+    sql_attr_uint = goods_id_new 
+    # 字符串类型 
+    sql_attr_string = goods_name 
+    sql_attr_string = goods_color 
+    # 用于命令界面端(CLI)调用的测试(一般来说不需要) 
+    #sql_query_info = SELECT * FROM goods_test Where goods_id = $goods_id; 
+} 
+# 索引 
+index goods 
+{ 
+    # 索引源声明 
+    source = goods_src 
+    # 索引文件的存放位置 
+    path = /usr/local/sphinx-for-chinese-1.10.1/var/data/goods
+    # 文件存储模式(默认为extern) 
+    docinfo = extern 
+    # 缓存数据内存锁定 
+    mlock = 0 
+    # 马氏形态学(对中文无效) 
+    morphology = none 
+    # 索引词最小长度 
+    min_word_len = 1 
+    # 数据编码(设置成utf8才能索引中文) 
+    charset_type = utf-8 
+    # 中文分词词典 
+    chinese_dictionary = /usr/local/sphinx-for-chinese-1.10.1/etc/xdict_1.1 
+    # 最小索引前缀长度 
+    min_prefix_len = 0 
+    # 最小索引中缀长度 
+    min_infix_len = 1 
+    # 对于非字母型数据的长度切割(for CJK indexing) 
+    ngram_len = 1 
+    # 对否对去除用户输入查询内容的html标签 
+    html_strip = 0 
+} 
+# 索引器设置 
+indexer 
+{ 
+    # 内存大小限制 默认是 32M, 最大 2047M, 推荐为 256M 到 1024M之间 
+    mem_limit = 256M 
+} 
+# sphinx服务进程search的相关配置 
+searchd 
+{ 
+    # 监测端口及形式,一下几种均可,默认为本机9312端口 
+    # listen = 127.0.0.1 
+    # listen = 192.168.0.1:9312 
+    # listen = 9312 
+    # listen = /var/run/searchd.sock 
+    # search进程的日志路径 
+    log = /usr/local/sphinx-for-chinese-1.10.1/var/log/searchd.log 
+    # 查询日志地址 
+    query_log = /usr/local/sphinx-for-chinese-1.10.1/var/log/query.log 
+    # 读取超时时间 
+    read_timeout = 5 
+    # 请求超时市时间 
+    client_timeout = 300 
+    # searche进程的最大运行数 
+    max_children = 30 
+    # 进程ID文件 
+    pid_file = /usr/local/sphinx-for-chinese-1.10.1/var/log/searchd.pid 
+    # 最大的查询结果返回数 
+    max_matches = 1000 
+    # 是否支持无缝切换(做增量索引时需要) 
+    seamless_rotate = 1 
+    # 在启动运行时是否提前加载所有索引文件 
+    preopen_indexes = 0 
+    # 是否释放旧的索引文件 
+    unlink_old = 1 
+    # MVA跟新池大小(默认为1M) 
+    mva_updates_pool = 1M 
+    # 最大允许的网络包大小(默认8M) 
+    max_packet_size = 8M 
+    # 每个查询最大允许的过滤器数量(默认256) 
+    max_filters = 256 
+    #每个过滤器最大允许的值的个数(默认4096) 
+    max_filter_values = 4096 
+    # 每个组的最大查询数(默认为32) 
+    max_batch_queries = 32 
+} 
+# Sphinx配置文件结束
+
+
+
+mysql> create database sphinx collate 'utf8_general_ci';
+mysql> grant all privileges on sphinx.* to 'sphinxuser'@'' identified by 'sphinxpass';
+mysql> grant all privileges on sphinx.* to 'sphinxuser'@'localhost' identified by 'sphinxpass';
+mysql> use sphinx;
+mysql> CREATE TABLE IF NOT EXISTS `goods_test` (
+`goods_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '商品id',
+`goods_name` varchar(255) NOT NULL COMMENT '商品名称',
+`goods_color` varchar(60) NOT NULL COMMENT '商品颜色',
+PRIMARY KEY (`goods_id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COMMENT='商品表,sphinx示例' AUTO_INCREMENT=11 ;
+mysql> INSERT INTO `goods_test` (`goods_id`, `goods_name`, `goods_color`) VALUES
+(1, '热卖时尚双肩背包', '黑色'),
+(2, '热卖时尚电脑双肩背包', '灰色'),
+(3, '缤纷炫动时尚化妆包', '黑色'),
+(4, '缤纷炫动时尚化妆包', '蓝色'),
+(5, '缤纷炫动时尚化妆包', '粉红'),
+(6, '极致性感 女款衬衫', '黑色'),
+(7, '个性宣言 男款短袖衬衫', '蓝色'),
+(8, '个性宣言 男款短袖衬衫', '红色'),
+(9, '个性宣言 男款短袖衬衫', '绿色'),
+(10, '个性宣言 男款短袖衬衫', '黑色');
+
+
+
+在linux命令行下测试搜索
+/usr/local/sphinx-for-chinese-1.10.1/bin/search -c /usr/local/sphinx-for-chinese-1.10.1/etc/sphinx.conf 个性黑色
+
+外部调用 PHP版本
+<?php
+header ( 'Content-Type: text/html;charset="UTF-8"' );
+if ($_GET) {
+    // 关键词
+    $keyword = urldecode ( trim ( strip_tags ( $_GET ['keyword'] ) ) );
+    if ($keyword) {
+        // 包含Sphinx的api文件
+        require_once 'sphinxapi.php';
+        // sphinx服务器地址
+        $server = '192.168.128.130';
+        // 端口
+        $port = 9312;
+        // 索引名 为*时表示搜索所有索引
+        $indexName = 'goods';
+        // 分页页码
+        $page = intval ( $_GET ['page'] ) > 1 ? intval ( $_GET ['page'] ) : 1;
+        // 每页显示的数量
+        $pageSize = 30;
+        $sphinx = new SphinxClient ();
+        // 建立连接
+        $sphinx->SetServer ( $server, $port );
+        // 连接超时时间(非常必要,比如sphinx服务器挂了等异常情况) 单位为s,秒
+        $sphinx->SetConnectTimeout ( 3 );
+        // 最大查询时间 单位为ms,毫秒
+        $sphinx->SetMaxQueryTime ( 2000 );
+        // 按分页取结果
+        $sphinx->SetLimits ( ($page - 1) * $pageSize, $pageSize ); //第一个参数为offset,第二个参数为limit
+        // 模式
+        // $sphinx->SetMatchMode(SPH_MATCH_EXTENDED);
+        // 取到的原始数据
+        $orgDatas = $sphinx->Query ( $keyword, $indexName );
+        // 调试用,如果有错误的话,可以打印$errors的值
+        $errors = $sphinx->GetLastError ();
+        var_dump ( $errors );
+        echo '<pre>';
+        var_dump ( $orgDatas );
+    }
+} else {
+    echo '<form method="get"><input type="type" name="keyword"><input type="submit" value="商品搜索"></form>';
+}
+
