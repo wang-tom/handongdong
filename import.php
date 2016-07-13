@@ -37,7 +37,7 @@ if(isset($fileInfo)){
 }
 
 
-//upload.html************************************************
+//upload.html****************multipart/form-data******************
 <form action="upload_file" enctype="multipart/form-data" method="post">
 	<input type="file" name="myFile"/>
 	<input type="submit" value="upload"/>
